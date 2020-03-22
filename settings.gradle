@@ -1,0 +1,2 @@
+include ':app', ':darch-common', ':darch-ui', ':darch-logger-debug', ':darch-logger-release'
+rootProject.name='darch'

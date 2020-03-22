@@ -1,0 +1,10 @@
+import net.meilcli.darch.gradle.Libraries
+
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'DarchLibraryPlugin'
+
+dependencies {
+    implementation project(":darch-common")
+    implementation Libraries.Kotlin.reflect
+}
