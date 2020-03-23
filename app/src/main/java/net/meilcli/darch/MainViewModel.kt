@@ -1,19 +1,24 @@
 package net.meilcli.darch
 
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import net.meilcli.darch.common.IDarchViewModel
+import net.meilcli.darch.common.DarchViewModel
 import net.meilcli.darch.common.extensions.reactiveProperty
 import net.meilcli.darch.common.extensions.readOnlyReactiveProperty
 import net.meilcli.darch.common.loggers.ILogger
 import net.meilcli.darch.common.parameters.UnitParameter
 
 @ExperimentalCoroutinesApi
-class MainViewModel(override val logger: ILogger) : IDarchViewModel {
+class MainViewModel(
+    coroutineScope: CoroutineScope,
+    logger: ILogger
+) : DarchViewModel(coroutineScope, logger) {
 
     private val model = MainModel(this)
 
-    val textChangeCount =
-        model.readOnlyReactiveProperty<MainModel, Int> { it::textChangeCount.name }
+    val textChangeCount = model
+        .readOnlyReactiveProperty<MainModel, Int> { it::textChangeCount.name }
+        .select { it.toString() }
 
     val text = model.reactiveProperty<MainModel, String> { it::text.name }
 

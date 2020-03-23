@@ -19,10 +19,10 @@ class MainActivity : AppCompatActivity(), CoroutineScope by MainScope() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val mainViewModel = MainViewModel(Logger())
+        val mainViewModel = MainViewModel(this, Logger())
         launch {
             mainViewModel.textChangeCount.openSubscription().consumeEach {
-                textChangeCount.text = it.toString()
+                textChangeCount.text = it
             }
         }
         launch {
