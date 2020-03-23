@@ -9,6 +9,9 @@ class MainModel(
     darchComponent: IDarchComponent
 ) : DarchModel(darchComponent), INotifyPropertyChanged {
 
+    // static value for testing
+    val textChangeCountPrefix by property("TextChange").readonly()
+
     var textChangeCount by property(0).readonly()
         private set
 
