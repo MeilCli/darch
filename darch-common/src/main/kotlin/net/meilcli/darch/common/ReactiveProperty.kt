@@ -14,10 +14,18 @@ class ReactiveProperty<TModel : IDarchModel, TValue>(
 
     private var source = ConflatedBroadcastChannel<TValue>()
 
+    override var isValueInitialized: Boolean = false
+        private set
+
     init {
         if (notifiableProperty.isInitialized()) {
             source.offer(notifiableProperty.getValue())
+            isValueInitialized = true
         }
+    }
+
+    override fun value(): TValue {
+        return source.value
     }
 
     override fun eventRaised(event: PropertyEvent) {
@@ -41,7 +49,11 @@ class ReactiveProperty<TModel : IDarchModel, TValue>(
             return false
         }
         notifiableProperty.setValue(value)
-        return source.offer(value)
+        val result = source.offer(value)
+        if (result) {
+            isValueInitialized = true
+        }
+        return result
     }
 
     override fun openSubscription(): ReceiveChannel<TValue> {

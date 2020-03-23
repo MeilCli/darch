@@ -17,12 +17,23 @@ class SelectReactiveProperty<TSource, TResult>(
     private val channel = ConflatedBroadcastChannel<TResult>()
     private val job: Job
 
+    override var isValueInitialized: Boolean = false
+        private set
+
     init {
+        if (source.isValueInitialized) {
+            channel.offer(selector(source.value()))
+            isValueInitialized = true
+        }
         job = coroutineScope.launch {
             source.openSubscription().consumeEach {
                 channel.offer(selector(it))
             }
         }
+    }
+
+    override fun value(): TResult {
+        return channel.value
     }
 
     override fun openSubscription(): ReceiveChannel<TResult> {

@@ -14,10 +14,18 @@ class ReadOnlyReactiveProperty<TModel : IDarchModel, TValue>(
 
     private val source = ConflatedBroadcastChannel<TValue>()
 
+    override var isValueInitialized: Boolean = false
+        private set
+
     init {
-        if(notifiableProperty.isInitialized()){
+        if (notifiableProperty.isInitialized()) {
             source.offer(notifiableProperty.getValue())
+            isValueInitialized = true
         }
+    }
+
+    override fun value(): TValue {
+        return source.value
     }
 
     override fun eventRaised(event: PropertyEvent) {
@@ -27,11 +35,13 @@ class ReadOnlyReactiveProperty<TModel : IDarchModel, TValue>(
                 source.valueOrNull != notifiableProperty.getValue()
             ) {
                 source.offer(notifiableProperty.getValue())
+                isValueInitialized = true
             }
             is PropertyEvent.Unknown -> if (notifiableProperty.isInitialized() &&
                 source.valueOrNull != notifiableProperty.getValue()
             ) {
                 source.offer(notifiableProperty.getValue())
+                isValueInitialized = true
             }
         }
     }

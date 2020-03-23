@@ -17,14 +17,29 @@ class WhereReactiveProperty<T>(
     private val channel = ConflatedBroadcastChannel<T>()
     private val job: Job
 
+    override var isValueInitialized: Boolean = false
+        private set
+
     init {
+        if (source.isValueInitialized) {
+            val value = source.value()
+            if (predicate(value)) {
+                channel.offer(value)
+                isValueInitialized = true
+            }
+        }
         job = coroutineScope.launch {
             source.openSubscription().consumeEach {
                 if (predicate(it)) {
                     channel.offer(it)
+                    isValueInitialized = true
                 }
             }
         }
+    }
+
+    override fun value(): T {
+        return channel.value
     }
 
     override fun openSubscription(): ReceiveChannel<T> {
