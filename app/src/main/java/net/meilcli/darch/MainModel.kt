@@ -26,7 +26,7 @@ class MainModel(
     }
 
     override fun eventRaised(event: PropertyEvent) {
-        if (event is PropertyEvent.Named && event.property.name == this::text.name) {
+        if (event is PropertyEvent.Named && event.propertyName == this::text.name) {
             textChangeCount += 1
         }
     }
